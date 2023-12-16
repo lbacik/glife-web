@@ -10,6 +10,6 @@ services:
     build: "https://github.com/lbacik/glife-web.git#${TAG}"
     image: "glife-${TAG}"
     environment:
-      VIRTUAL_HOST: "${DOMAIN} www.${DOMAIN}"
-      LETSENCRYPT_HOST: "${DOMAIN} www.${DOMAIN}"
+      VIRTUAL_HOST: "${DOMAIN}, www.${DOMAIN}"
+      LETSENCRYPT_HOST: "${DOMAIN}, www.${DOMAIN}"
       APP_ENV: "prod"
