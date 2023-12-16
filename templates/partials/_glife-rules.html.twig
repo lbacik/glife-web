@@ -1,0 +1,41 @@
+
+<div class="flex flex-row justify-center mt-10">
+    <form method="get" data-controller="autosubmit" data-glife-target="rules">
+        <table class="">
+                <tr>
+                    <td></td>
+                    {% for i in range(0, 8) %}
+                        <td class="p-2 pb-0">{{ i }}</td>
+                    {% endfor %}
+                </tr>
+
+                <tr>
+                    <td>survive:</td>
+                    {% for i in range(0, 8) %}
+                        <td class="p-2 pt-0 pb-0">
+                            <input
+                                    id="survive-{{ i }}"
+                                    type="checkbox"
+                                    name="survive-{{ i }}"
+                                    data-action="autosubmit#debouncedDispatchRules"
+                            />
+                        </td>
+                    {% endfor %}
+                </tr>
+
+                <tr>
+                    <td>reproduction:</td>
+                    {% for i in range(0, 8) %}
+                        <td class="p-2 pt-0">
+                            <input
+                                    id="rep-{{ i }}"
+                                    type="checkbox"
+                                    name="rep-{{ i }}"
+                                    data-action="autosubmit#debouncedDispatchRules"
+                            />
+                        </td>
+                    {% endfor %}
+                </tr>
+        </table>
+    </form>
+</div>

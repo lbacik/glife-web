@@ -1,0 +1,112 @@
+
+{%
+    set inputClass = "
+        mt-1
+        text-gray-900
+        bg-gray-50
+        rounded-lg
+        block
+        w-full
+        p-2.5
+        border
+        border-gray-300
+        focus:z-10
+        focus:ring-blue-500
+        focus:border-blue-500
+        dark:bg-gray-700
+        dark:border-gray-600
+        dark:text-white
+        dark:placeholder-gray-400
+        dark:focus:ring-blue-500
+        dark:focus:border-blue-500
+"
+%}
+
+
+<div class="flex flex-row justify-center mt-12">
+    <div class="basis-3/4">
+        <form
+                method="GET"
+                {{ stimulus_controller("autosubmit", {
+                    initData: initData,
+                }) }}
+        >
+            <div class="flex flex-row">
+                <label class="block text-sm font-medium text-gray-700 dark:text-white">
+                    x
+                    <input
+                            type="number"
+                            name="width"
+                            value="{{ initX }}"
+                            data-action="autosubmit#debouncedDispatchInitGrid"
+                            class="{{ inputClass }}"
+                            data-glife-target="initGridX"
+                    />
+                </label>
+
+                <label class="block text-sm font-medium text-gray-700 dark:text-white ml-5">
+                    y
+                    <input
+                            type="number"
+                            name="height"
+                            value="{{ initY }}"
+                            data-action="autosubmit#debouncedDispatchInitGrid"
+                            class="{{ inputClass }}"
+                            data-glife-target="initGridY"
+                    />
+                </label>
+                <label class="block text-sm font-medium text-gray-700 dark:text-white ml-5">
+                    Width
+                    <input
+                            type="number"
+                            name="cellSize"
+                            value="{{ initWidth }}"
+                            data-action="autosubmit#debouncedDispatchInitGrid"
+                            class="{{ inputClass }}"
+                            data-glife-target="initGridWidth"
+                    />
+                </label>
+
+            </div>
+
+            <div class="flex flex-row mt-4">
+
+                <label class="block text-sm font-medium text-gray-700 dark:text-white w-full">
+                    Initial generation
+                    <textarea class="{{ inputClass }}"
+                              name="init-gen"
+                              data-action="input->autosubmit#debouncedDispatchInitGridData"
+                              data-autosubmit-target="initGridData"
+{#                              data-glife-target="initGridData"#}
+                    >{{ initData }}</textarea>
+                </label>
+
+            </div>
+
+            <div class="flex flex-row mt-4">
+                <div class="basis-1/2">
+                    <label class="block text-sm font-medium text-gray-700 dark:text-white">
+                        <input
+                                type="checkbox"
+                                name="show-grid"
+                                data-action="glife#toggleInitGrid"
+                                data-glife-target="initGridCheckbox"
+                        /> show on grid
+                    </label>
+                </div>
+                <div class="basis-1/2 text-right">
+
+{#                    <button#}
+{#                            class=""#}
+{#                    >Generate</button>#}
+
+                    <button
+                            type="button"
+                            class="ml-5 mr-2 bg-gray-100 hover:bg-blue-500 hover:text-white py-2 px-4 rounded mb-1"
+                            data-action="glife#initGridApply"
+                    >Apply</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
