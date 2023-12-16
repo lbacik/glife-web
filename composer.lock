@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "26084f12eeb3a06fb49b6ce60efa7cd0",
+    "content-hash": "0b7cc403daae9670c1879b2ce77abae4",
     "packages": [
         {
             "name": "composer/semver",
@@ -1543,6 +1543,51 @@
                 }
             ],
             "time": "2023-10-18T07:54:22+00:00"
+        },
+        {
+            "name": "lbacik/value-object",
+            "version": "v1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/lbacik/value-object.git",
+                "reference": "266c39310a6c20c7ec09599944e7e322cd45693b"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/lbacik/value-object/zipball/266c39310a6c20c7ec09599944e7e322cd45693b",
+                "reference": "266c39310a6c20c7ec09599944e7e322cd45693b",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=8.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^9.5",
+                "squizlabs/php_codesniffer": "3.*"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Sushi\\": "src/Sushi/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "LGPL-2.0-or-later"
+            ],
+            "authors": [
+                {
+                    "name": "Łukasz Bacik",
+                    "email": "mail@luka.sh",
+                    "homepage": "https://github.com/lbacik/value-object"
+                }
+            ],
+            "description": "Simple Value Object implementation",
+            "support": {
+                "issues": "https://github.com/lbacik/value-object/issues",
+                "source": "https://github.com/lbacik/value-object/tree/v1.0"
+            },
+            "time": "2022-04-03T08:56:23+00:00"
         },
         {
             "name": "monolog/monolog",
