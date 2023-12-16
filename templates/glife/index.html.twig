@@ -2,15 +2,38 @@
 
 {% block title %}Glife{% endblock %}
 
+{%
+    set inputClass = "
+        mt-1
+        text-gray-900
+        bg-gray-50
+        rounded-lg
+        block
+        w-full
+        p-2.5
+        border
+        border-gray-300
+        focus:z-10
+        focus:ring-blue-500
+        focus:border-blue-500
+        dark:bg-gray-700
+        dark:border-gray-600
+        dark:text-white
+        dark:placeholder-gray-400
+        dark:focus:ring-blue-500
+        dark:focus:border-blue-500
+"
+%}
+
 {% block body %}
 
     <div id="glife"
          {{ stimulus_controller('glife', {
-             width: boardWidth,
-             height: boardHeight,
-             cellSize: boardCellSize,
-             rules: rules,
-             autoPlay: play,
+             width: config.width,
+             height: config.height,
+             cellSize: config.cellSize,
+             rules: config.rules,
+             autoPlay: config.play,
              url: url,
          }) }}
          data-action="
@@ -21,21 +44,13 @@
          "
     >
         <div class="flex flex-row mt-10">
-
             <div id="configuration" class="basis-1/3 mb-20">
-
                 {{ include('partials/_board-config.html.twig') }}
-
                 {{ include('partials/_glife-rules.html.twig') }}
-
                 {{ include('partials/_board-buttons.html.twig') }}
-
                 {{ include('partials/_init-gen.html.twig') }}
-
                 {{ include('partials/_url.html.twig') }}
-
             </div>
-
             <div id="board" class="basis-2/3">
                 <div class="flex flex-row justify-center">
                     <div>

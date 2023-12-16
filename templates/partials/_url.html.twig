@@ -1,28 +1,19 @@
 <div class="flex flex-row justify-center mt-10">
-
     <div class="basis-4/5">
-
         <div class="grid grid-flow-col">
-
             <div class="">
                 <div class="mb-3 break-all">
                     URL: <span
                             data-glife-target="url"
                             class="text-slate-400"
                     >{{ url|default('https://foo.bar?foo=bar') }}</span>
-{#                    <button#}
-{#                            class="hover:bg-blue-500 hover:text-white text-blue-600 font-bold py-2 px-4 rounded mb-1"#}
-{#                    >#}
                         <button
                                 class="float-right text-blue-300 bg-gray-100 hover:text-blue-600 hover:bg-green-200 rounded p-1"
                                 data-action="click->glife#copyUrl"
                         >
-{#                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copy" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M7 7m0 2.667a2.667 2.667 0 0 1 2.667 -2.667h8.666a2.667 2.667 0 0 1 2.667 2.667v8.666a2.667 2.667 0 0 1 -2.667 2.667h-8.666a2.667 2.667 0 0 1 -2.667 -2.667z" /><path d="M4.012 16.737a2.005 2.005 0 0 1 -1.012 -1.737v-10c0 -1.1 .9 -2 2 -2h10c.75 0 1.158 .385 1.5 1" /></svg>#}
                             <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clipboard" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M9 5h-2a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-12a2 2 0 0 0 -2 -2h-2" /><path d="M9 3m0 2a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v0a2 2 0 0 1 -2 2h-2a2 2 0 0 1 -2 -2z" /></svg>
                         </button>
-{#                    </button>#}
                 </div>
-
                 <label>
                     <input type="checkbox"
                            data-glife-target="autoPlay"
@@ -31,7 +22,5 @@
                 </label>
             </div>
         </div>
-
     </div>
-
 </div>
