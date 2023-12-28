@@ -1,6 +1,8 @@
 twig:
     default_path: '%kernel.project_dir%/templates'
     form_themes: ['@Flowbite/form/default.html.twig']
+    globals:
+        version: '%env(APP_VERSION)%'
 
 when@test:
     twig:
