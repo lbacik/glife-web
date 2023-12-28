@@ -11,7 +11,7 @@ WORKDIR /opt/app
 
 RUN composer install --no-interaction --optimize-autoloader \
     && ./bin/console tailwind:build \
-    && ./bin/console assets:install public \
+    && ./bin/console asset-map:compile \
     && rm -drf /var/www/html \
     && ln -s /opt/app/public /var/www/html \
     && chown -R www-data:www-data /opt/app/var
