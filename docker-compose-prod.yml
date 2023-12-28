@@ -13,3 +13,4 @@ services:
       VIRTUAL_HOST: "${DOMAIN}, www.${DOMAIN}"
       LETSENCRYPT_HOST: "${DOMAIN}, www.${DOMAIN}"
       APP_ENV: "prod"
+      APP_VERSION: "${TAG}"
