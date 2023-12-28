@@ -17,9 +17,10 @@ export default class extends Controller {
         'initGridY',
         'initGridWidth',
         'initGridCheckbox',
-        // 'initGridData',
+        'initGridData',
         'url',
         'autoPlay',
+        'generation',
     ];
     static values = {
         width: Number,
@@ -31,6 +32,7 @@ export default class extends Controller {
     }
 
     glife = null;
+    generation = 0;
     playing = false;
     initGrid = false;
     initGridData = []
@@ -99,10 +101,13 @@ export default class extends Controller {
     }
 
     oneStep() {
+        if (this.glife.getStatus() === 'alive') {
+            this.generation++
+            this.generationTarget.innerText = this.generation
+        }
+
         this.glife.nextGeneration()
-
         drawData(this.boardCanvasTarget, this.glife.getField(), this.cellSizeValue)
-
         this.statusTarget.innerHTML = this.glife.getStatus()
 
         if (this.glife.getStatus() !== 'alive' && this.playing === true) {
@@ -218,11 +223,13 @@ export default class extends Controller {
         })
 
         this.drawBaseData()
+        this.resetGeneration()
     }
 
     clear() {
         this.glife.setField(Field(this.widthValue, this.heightValue), true)
         this.drawBaseData()
+        this.resetGeneration()
     }
 
     generateUrl() {
@@ -262,10 +269,26 @@ export default class extends Controller {
         }, 1000)
     }
 
-    // parseInitGridData(data) {
-    //     const inputData = data.split('')
-    //     return inputData.map((cell) => {
-    //         return Number(cell === '1')
-    //     })
-    // }
+    resetGeneration() {
+        this.generation = 0
+        this.generationTarget.innerText = this.generation
+    }
+
+    setInitial() {
+        const gridX = Number(this.initGridXTarget.value)
+        const gridY = Number(this.initGridYTarget.value)
+        const gridWidth = Number(this.initGridWidthTarget.value)
+
+        const result = []
+        for(let j = gridY; j < this.heightValue; j++) {
+            for (let i = 0; i < gridWidth; i++) {
+                result.push(this.glife.getCell(gridX + i, j))
+            }
+        }
+
+        const lastOne = result.lastIndexOf(true)
+        this.initGridData = result.slice(0, lastOne + 1)
+        this.initGridDataTarget.value = result.slice(0, lastOne + 1).map(i => i === true ? '1' : '0').join('')
+        this.drawInitGridData()
+    }
 }

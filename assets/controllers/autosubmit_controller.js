@@ -17,9 +17,6 @@ export default class extends Controller {
   }
 
     connect() {
-
-      console.log('initData', this.initDataValue)
-
       if (this.initDataValue) {
         this.debouncedDispatchInitGridData()
       }
@@ -55,7 +52,6 @@ export default class extends Controller {
     let apply = false;
 
     if (this.initDataValue.length > 0) {
-      console.log('initDataValue', this.initDataValue)
       initData = this.initDataValue
       apply = true
       this.initDataValue = null
