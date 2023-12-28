@@ -287,8 +287,8 @@ export default class extends Controller {
         }
 
         const lastOne = result.lastIndexOf(true)
-        this.initGridData = result.slice(0, lastOne + 1)
-        this.initGridDataTarget.value = result.slice(0, lastOne + 1).map(i => i === true ? '1' : '0').join('')
+        this.initGridData = result.slice(0, lastOne + 1).map(i => i === true ? '1' : '0').join('')
+        this.initGridDataTarget.value = this.initGridData
         this.drawInitGridData()
     }
 }
