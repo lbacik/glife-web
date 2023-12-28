@@ -29,8 +29,6 @@ export default function GLife(fieldX, fieldY, rules) {
         }
 
         _field = newField
-
-        // _status = state().getValues().ALIVE
     }
 
     const getStatus = () => {
@@ -42,10 +40,6 @@ export default function GLife(fieldX, fieldY, rules) {
     }
 
     const setCell = (x, y, value) => {
-
-        console.log('setCell', x, y, value)
-        console.log('setCell', _field.getCurrentX(), _field.getCurrentY())
-
         if ((x < 0 || x > _field.getCurrentX() - 1) || (y < 0 || y > _field.getCurrentY() - 1)) {
             return
         }
@@ -77,10 +71,7 @@ export default function GLife(fieldX, fieldY, rules) {
         })
 
         setField(newField)
-
         _status = State().check(_field, _previousField)
-
-        console.log('status', _status)
     }
 
     const setFieldSize = (x, y) => {

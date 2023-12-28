@@ -62,8 +62,6 @@ export default class extends Controller {
     }
 
     toggleCell(event) {
-        console.log('click', event.offsetX, event.offsetY)
-
         const x = Math.floor(event.offsetX / this.cellSizeValue)
         const y = Math.floor(event.offsetY / this.cellSizeValue)
 

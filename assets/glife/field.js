@@ -76,8 +76,6 @@ export default function Field(fieldX, fieldY) {
 
         currentX = x
         currentY = y
-
-        console.log('new size', currentX, currentY)
     }
 
     const getCurrentX = () => {
