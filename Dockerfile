@@ -1,4 +1,4 @@
-FROM php:apache
+FROM php:8.3.1-apache
 
 RUN apt-get -y update && apt-get install -y \
     git zip unzip \
