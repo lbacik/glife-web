@@ -1,0 +1,19 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+
+    <div class="flex flex-row justify-center">
+        <div class="basis-2/3">
+            <div class="mb-20">
+                {{ include('tests_json_hub/_test-params.html.twig') }}
+            </div>
+            <div class="mb-20">
+                {{ render_chart(chart) }}
+            </div>
+            <div>
+                {{ include('tests_json_hub/_last-generation.html.twig')}}
+            </diva>
+        </div>
+    </div>
+
+{% endblock %}

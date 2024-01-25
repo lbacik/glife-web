@@ -1,0 +1,38 @@
+
+<table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+    <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+    <tr>
+        <th scope="col" class="px-6 py-3">
+            Genotype
+        </th>
+        <th>
+            Assessment
+        </th>
+        <th scope="col" class="px-6 py-3"></th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for item in test.lastGeneration %}
+        <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+            <td class="px-6 py-4">
+                {{ item.genotype|slice(0, 50) }}...
+            </td>
+            <td class="px-6 py-4">
+                {{ item.assessment }}
+            </td>
+            <td class="px-6 py-4">
+                <a href="{{ path('app_glife', {
+                    width: test.testConfiguration.glife.width,
+                    height: test.testConfiguration.glife.height,
+                    initX: test.testConfiguration.glife.colonyX,
+                    initY: test.testConfiguration.glife.colonyY,
+                    initWidth: test.testConfiguration.glife.colonyWidth,
+                    initData: item.genotype,
+                }) }}"
+                   class="font-medium text-blue-600 dark:text-blue-500 hover:underline"
+                >glife board</a>
+            </td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>

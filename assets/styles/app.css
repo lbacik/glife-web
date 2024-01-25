@@ -25,3 +25,11 @@ canvas {
 .about .warning {
     @apply m-10 p-2 flex flex-row justify-center bg-red-100 rounded font-sans;
 }
+
+.pagination__item {
+    display: inline-block;
+    border: 1px solid #bcbcbc;
+    color: #5d5d5d;
+    padding: .25em .35em;
+    text-decoration: none;
+}
