@@ -14,3 +14,5 @@ services:
       LETSENCRYPT_HOST: "${DOMAIN}, www.${DOMAIN}"
       APP_ENV: "prod"
       APP_VERSION: "${TAG}"
+      JSONHUB_API: "${JSONHUB_API}"
+      TEST_RESULT_V1_DEFINITION: "${TEST_RESULT_V1_DEFINITION}"
