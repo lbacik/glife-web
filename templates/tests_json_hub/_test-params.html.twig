@@ -1,0 +1,83 @@
+<table class="text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+    <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+        <tr>
+            <th scope="row"  class="px-6 py-3 text-center" colspan="2">Test params</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+            <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                genes
+            </th>
+            <td  class="px-6 py-3">
+                maxGeneration:
+                <span class="gray-800 font-bold">
+                    {{ test.testConfiguration.genes.maxGeneration }}
+                </span>
+                genotypeLength:
+                <span class="gray-800 font-bold">
+                    {{ test.testConfiguration.genes.genotypeLength }}
+                </span>
+                startPopulationSize:
+                <span class="gray-800 font-bold">
+                    {{ test.testConfiguration.genes.startPopulationSize }}
+                </span>
+                createPercentage:
+                <span class="gray-800 font-bold">
+                    {{ test.testConfiguration.genes.createPercentage }}
+                </span>
+                mutation - probability:
+                <span class="gray-800 font-bold">
+                    {{ test.testConfiguration.genes.mutationProbability }}
+                </span>
+                selection - individuals to choose:
+                <span class="gray-800 font-bold">
+                    {{ test.testConfiguration.genes.selectionIndividualsToChoose }}
+                </span>
+                crossover - type:
+                <span class="gray-800 font-bold">
+                    {{ test.testConfiguration.genes.crossoverType }}
+                </span>
+                crossover - population size:
+                <span class="gray-800 font-bold">
+                    {{ test.testConfiguration.genes.crossoverPopulationSize }}
+                </span>
+                crossover - children per pair:
+                <span class="gray-800 font-bold">
+                    {{ test.testConfiguration.genes.crossoverChildrenPerPair }}
+                </span>
+            </td>
+        </tr>
+        <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+            <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                glife
+            </th>
+            <td class="px-6 py-3">
+                width:
+                <span class="gray-800 font-bold">
+                    {{ test.testConfiguration.glife.width }}
+                </span>
+                height:
+                <span class="gray-800 font-bold">
+                    {{ test.testConfiguration.glife.height }}
+                </span>
+                maxGeneration:
+                <span class="gray-800 font-bold">
+                    {{ test.testConfiguration.glife.maxGeneration }}
+                </span>
+                colonyX:
+                <span class="gray-800 font-bold">
+                    {{ test.testConfiguration.glife.colonyX }}
+                </span>
+                colonyY:
+                <span class="gray-800 font-bold">
+                    {{ test.testConfiguration.glife.colonyY }}
+                </span>
+                colonyWidth:
+                <span class="gray-800 font-bold">
+                    {{ test.testConfiguration.glife.colonyWidth }}
+                </span>
+            </td>
+        </tr>
+    </tbody>
+</table>

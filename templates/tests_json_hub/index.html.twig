@@ -1,0 +1,70 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+
+    <div class="flex flex-row justify-center">
+        <table class="basis-3/4 text-sm text-center text-gray-500 dark:text-gray-400">
+            <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+            <tr>
+                <th scope="col" class="px-6 py-3">link</th>
+                <th>
+                    board
+                    <div>width/height</div>
+                </th>
+                <th scope="col" class="px-6 py-3">
+                    colony
+                    <div>length/width</div>
+                </th>
+                <th scope="col" class="px-6 py-3">
+                    iter
+                    <div>glife:genes</div>
+                </th>
+                <th scope="col" class="px-6 py-3">genes</th>
+                <th scope="col" class="px-6 py-3">the best</th>
+                <th scope="col" class="px-6 py-3"></th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for item in tests %}
+                <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                    <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                        <a href="{{ item.testUrl }}" class="font-medium hover:underline">
+                            test link
+                        </a>
+                    </th>
+                    <td class="px-6 py-4">
+                        {{ item.testConfiguration.glife.width }}x{{ item.testConfiguration.glife.height }}
+                    </td>
+                    <td class="px-6 py-4">
+                        {{ item.testConfiguration.genes.genotypeLength }}/{{ item.testConfiguration.glife.colonyWidth }}
+                    </td>
+                    <td class="px-6 py-4">
+                        {{ item.testConfiguration.genes.maxGeneration }}:{{ item.testConfiguration.glife.maxGeneration }}
+                    </td>
+                    <td class="px-6 py-4">
+                        <span>p: {{ item.testConfiguration.genes.startPopulationSize }}</span>
+                        <span>m: {{ item.testConfiguration.genes.mutationProbability }}</span>
+                        <span>s: {{ item.testConfiguration.genes.selectionIndividualsToChoose }}</span>
+                        <span>
+                            c: {{ item.testConfiguration.genes.crossoverType }},
+                            {{ item.testConfiguration.genes.crossoverChildrenPerPair }}
+                        </span>
+                    </td>
+                    <td>
+                        {{ item.stats.bestAssessment|default('') }}
+                    </td>
+                    <td class="px-6 py-4">
+                        <a href="{{ path('app_tests_jsonhub_show', {uuid: item.id}) }}"
+                           class="font-medium text-blue-600 dark:text-blue-500 hover:underline"
+                        >show</a>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="flex flex-row justify-center mt-10">
+        {{ pagerfanta(tests) }}
+    </div>
+{% endblock %}

@@ -12,3 +12,6 @@ services:
     environment:
       VIRTUAL_HOST: "${TAG}.${DOMAIN}"
       LETSENCRYPT_HOST: "${TAG}.${DOMAIN}"
+      JSONHUB_API: "${JSONHUB_API}"
+      TEST_RESULT_V1_DEFINITION: "${TEST_RESULT_V1_DEFINITION}"
+      APP_VERSION: "${TAG}"

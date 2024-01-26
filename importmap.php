@@ -30,4 +30,7 @@ return [
     'debounce' => [
         'version' => '2.0.0',
     ],
+    'chart.js/auto' => [
+        'version' => '3.9.1',
+    ],
 ];
