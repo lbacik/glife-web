@@ -14,6 +14,18 @@ canvas {
     @apply text-3xl;
 }
 
+.about h2 {
+    @apply text-2xl mt-5 mb-5;
+}
+
+.about h3 {
+    @apply text-xl mt-3 mb-3;
+}
+
+.about h4 {
+    @apply text-lg mt-3 mb-3;
+}
+
 .about p {
     @apply m-3 ml-0;
 }
@@ -24,6 +36,20 @@ canvas {
 
 .about .warning {
     @apply m-10 p-2 flex flex-row justify-center bg-red-100 rounded font-sans;
+}
+
+.about ul {
+    list-style: disc inside;
+}
+
+.about ul.icons {
+    list-style: none;
+}
+
+.about ul.icons img {
+    width: 32px;
+    float: left;
+    margin-right: 10px;
 }
 
 .pagination__item {
