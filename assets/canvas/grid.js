@@ -17,6 +17,13 @@ function drawGrid(canvas, width, height, cellSize, color = '#bbb', lineWidth = 1
     }
 }
 
+function drawBorder(canvas, color = '#bbb', lineWidth = 1) {
+    const ctx = canvas.getContext('2d')
+    ctx.strokeStyle = color
+    ctx.lineWidth = lineWidth
+    ctx.strokeRect(0.5, 0.5, canvas.width - 1, canvas.height - 1)
+}
+
 function setSize(canvas, width, height, cellSize) {
     canvas.width = width * cellSize
     canvas.height = height * cellSize
@@ -27,4 +34,4 @@ function clear(canvas) {
     ctx.clearRect(0, 0, canvas.width, canvas.height)
 }
 
-export { drawGrid, setSize, clear }
+export { drawGrid, drawBorder, setSize, clear }

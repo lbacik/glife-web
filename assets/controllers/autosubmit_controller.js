@@ -35,6 +35,8 @@ export default class extends Controller {
       width: this.element.width.value,
       height: this.element.height.value,
       cellSize: this.element.cellSize.value,
+      showGrid: this.element.elements.namedItem('showGrid').checked,
+      compact: this.element.elements.namedItem('compact').checked,
     } })
   }
 
