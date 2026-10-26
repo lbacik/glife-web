@@ -1,0 +1,78 @@
+# The gate. Runs on every branch push and pull request, and release.yml calls
+# it via workflow_call, so what blocks a production deploy is the same thing
+# that runs on every push - not a second copy that can drift.
+#
+# `branches: ['**']` matches every branch and no tag, so a v* tag push does not
+# run the suite twice (once here, once through release.yml).
+#
+# No continue-on-error anywhere: this file is red only when the repo is broken.
+name: Test
+
+on:
+  push:
+    branches: ['**']
+  pull_request:
+  workflow_call:
+
+concurrency:
+  group: test-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      # 8.3 matches production: .php-version and the Dockerfile's FrankenPHP image.
+      # (composer.json only says >=8.2; CI follows the image, not the floor.)
+      - uses: shivammathur/setup-php@2.40.0
+        with:
+          php-version: '8.3'
+          tools: composer:v2
+          coverage: none
+
+      - name: Get Composer cache directory
+        id: composer-cache
+        run: echo "dir=$(composer config cache-files-dir)" >> "$GITHUB_OUTPUT"
+
+      - uses: actions/cache@v6
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: composer-${{ hashFiles('composer.lock') }}
+          restore-keys: composer-
+
+      - name: Install dependencies
+        run: composer install --no-interaction --prefer-dist --no-progress
+
+      # Order: compile-level checks first, then lint, then tests.
+      - name: Composer manifest
+        # --no-check-publish: this is an application, name/description are not required.
+        run: composer validate --no-check-publish
+
+      - name: Lint container (service wiring / type compatibility)
+        run: php bin/console lint:container
+        env:
+          APP_ENV: test
+
+      - name: Lint YAML
+        run: php bin/console lint:yaml config translations
+
+      - name: Lint Twig
+        run: php bin/console lint:twig templates
+
+      # tests/ currently holds only a bootstrap, so this runs no tests yet; it is
+      # kept so the first test added is gated from day one.
+      - name: PHPUnit
+        run: vendor/bin/phpunit
+
+# Deliberately not here:
+#  - No `services:` (no database, cache or broker). The project has Doctrine
+#    installed but no entities and no migrations, and no test path constructs a
+#    connection, so provisioning Postgres would only slow the job.
+#  - No migration-replay job: the project owns no schema.
+#  - No tailwind:build / asset-map:compile: nothing here renders assets; the
+#    release image build runs both and fails the tag if they break.

@@ -1,8 +1,10 @@
-FROM php:8.3.1-apache
+FROM dunglas/frankenphp:1-php8.3-bookworm
+
+ENV SERVER_NAME=:80 \
+    SERVER_ROOT=public/
 
 RUN apt-get -y update && apt-get install -y \
-    git zip unzip \
-    && a2enmod rewrite
+    curl git zip unzip
 
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
@@ -12,6 +14,4 @@ WORKDIR /opt/app
 RUN composer install --no-interaction --optimize-autoloader \
     && ./bin/console tailwind:build \
     && ./bin/console asset-map:compile \
-    && rm -drf /var/www/html \
-    && ln -s /opt/app/public /var/www/html \
     && chown -R www-data:www-data /opt/app/var
