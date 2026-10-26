@@ -13,12 +13,12 @@ export default class extends Controller {
     this.debouncedDispatch = debounce(this.debouncedDispatch.bind(this), 300)
     // this.debouncedDispatchRules = debounce(this.debouncedDispatchRules.bind(this), 300)
     this.debouncedDispatchInitGrid = debounce(this.debouncedDispatchInitGrid.bind(this), 300)
-    this.debouncedDispatchInitGridData = debounce(this.debouncedDispatchInitGridData.bind(this), 300)
+    this.debouncedDispatchInitGridData = debounce(this.dispatchInitGridData.bind(this), 300)
   }
 
     connect() {
       if (this.initDataValue) {
-        this.debouncedDispatchInitGridData()
+        this.debouncedDispatchInitGridData(true)
       }
     }
 
@@ -48,21 +48,18 @@ export default class extends Controller {
     this.dispatch('submit-init-grid')
   }
 
-  debouncedDispatchInitGridData() {
+  dispatchInitGridData(apply = false) {
 
     let initData = null;
-    let apply = false;
 
     if (this.initDataValue.length > 0) {
       initData = this.initDataValue
-      apply = true
-      this.initDataValue = null
+      this.initDataValue = ''
     } else {
       initData = this.initGridDataTarget.value
     }
 
-    const inputData = initData.split('')
-    const data = inputData.map((cell) => {
+    const data = String(initData ?? '').replace(/[^01]/g, '').split('').map((cell) => {
       return Number(cell === '1')
     })
 
@@ -89,8 +86,8 @@ export default class extends Controller {
     const reader = new FileReader()
     reader.onload = () => {
       this.initGridDataTarget.value = String(reader.result || '').trim()
-      this.initDataValue = null
-      this.debouncedDispatchInitGridData()
+      this.initDataValue = ''
+      this.dispatchInitGridData()
     }
     reader.readAsText(file)
   }

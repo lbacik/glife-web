@@ -20,6 +20,7 @@ export default class extends Controller {
         'initGridData',
         'url',
         'autoPlay',
+        'largeInitDataWarning',
         'generation',
     ];
     static values = {
@@ -217,22 +218,24 @@ export default class extends Controller {
         )
     }
 
+    parseInitGridData(raw) {
+        return String(raw ?? '').replace(/[^01]/g, '').split('').map((cell) => Number(cell === '1'))
+    }
+
     initGridApply() {
         this.initGrid = false
         this.initGridCheckboxTarget.checked = false
 
-        this.glife.setField(Field(this.widthValue, this.heightValue), true)
+        this.initGridData = this.parseInitGridData(this.initGridDataTarget.value)
 
         const gridX = Number(this.initGridXTarget.value)
         const gridY = Number(this.initGridYTarget.value)
         const gridWidth = Number(this.initGridWidthTarget.value)
 
         this.initGridData.forEach((cell, x) => {
-            if (Boolean(cell)) {
-                const j = Math.floor(x / gridWidth)
-                const i = x % gridWidth
-                this.glife.setCell(gridX + i, gridY + j, true)
-            }
+            const j = Math.floor(x / gridWidth)
+            const i = x % gridWidth
+            this.glife.setCell(gridX + i, gridY + j, Boolean(cell))
         })
 
         this.drawBaseData()
@@ -256,12 +259,19 @@ export default class extends Controller {
         url.searchParams.set('initX', this.initGridXTarget.value)
         url.searchParams.set('initY', this.initGridYTarget.value)
         url.searchParams.set('initWidth', this.initGridWidthTarget.value)
+        const initData = this.initGridData.join('')
+        const initDataTooLarge = !this.useInitPreset && initData.length > 2048
+        this.largeInitDataWarningTarget.classList.toggle('hidden', !initDataTooLarge)
         if (this.useInitPreset) {
             url.searchParams.set('preset', 'portrait')
             url.searchParams.delete('initData')
         } else {
             url.searchParams.delete('preset')
-            url.searchParams.set('initData', this.initGridData.join(''))
+            if (initDataTooLarge) {
+                url.searchParams.delete('initData')
+            } else {
+                url.searchParams.set('initData', initData)
+            }
         }
         this.urlTarget.innerText = url.toString()
     }
