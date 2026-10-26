@@ -1,5 +1,5 @@
 import { Controller } from '@hotwired/stimulus';
-import { drawGrid, setSize, clear } from '../canvas/grid.js';
+import { drawBorder, drawGrid, setSize, clear } from '../canvas/grid.js';
 import Factory from '../glife/factory.js';
 import { drawData } from '../canvas/data.js';
 import { drawInitGrid, showInitGridData } from "../canvas/init-grid.js";
@@ -20,6 +20,7 @@ export default class extends Controller {
         'initGridData',
         'url',
         'autoPlay',
+        'largeInitDataWarning',
         'generation',
     ];
     static values = {
@@ -36,15 +37,17 @@ export default class extends Controller {
     playing = false;
     initGrid = false;
     initGridData = []
+    useInitPreset = false
+    showGrid = true
+    compact = false
 
     connect() {
+        this.useInitPreset = new URL(this.urlValue).searchParams.get('preset') === 'portrait'
         setSize(this.boardCanvasTarget, this.widthValue, this.heightValue, this.cellSizeValue)
-        drawGrid(this.boardCanvasTarget, this.widthValue, this.heightValue, this.cellSizeValue, '#dddddd')
-
         this.glife = Factory.createEmpty(this.widthValue, this.heightValue, this.rulesValue)
         this.populateRules()
 
-        drawData(this.boardCanvasTarget, this.glife.getField(), this.cellSizeValue)
+        this.drawBoard()
 
         this.generateUrl()
     }
@@ -53,12 +56,13 @@ export default class extends Controller {
         this.widthValue = event.detail.width;
         this.heightValue = event.detail.height;
         this.cellSizeValue = event.detail.cellSize;
+        this.showGrid = event.detail.showGrid;
+        this.compact = event.detail.compact;
 
         setSize(this.boardCanvasTarget, this.widthValue, this.heightValue, this.cellSizeValue)
-        drawGrid(this.boardCanvasTarget, this.widthValue, this.heightValue, this.cellSizeValue)
 
         this.glife.setFieldSize(this.widthValue, this.heightValue)
-        drawData(this.boardCanvasTarget, this.glife.getField(), this.cellSizeValue)
+        this.drawBoard()
 
         this.generateUrl()
     }
@@ -70,7 +74,7 @@ export default class extends Controller {
         const value = this.glife.getCell(x, y)
         this.glife.setCell(x, y, !value)
 
-        drawData(this.boardCanvasTarget, this.glife.getField(), this.cellSizeValue)
+        this.drawBoard()
     }
 
     populateRules() {
@@ -107,7 +111,7 @@ export default class extends Controller {
         }
 
         this.glife.nextGeneration()
-        drawData(this.boardCanvasTarget, this.glife.getField(), this.cellSizeValue)
+        this.drawBoard()
         this.statusTarget.innerHTML = this.glife.getStatus()
 
         if (this.glife.getStatus() !== 'alive' && this.playing === true) {
@@ -161,6 +165,9 @@ export default class extends Controller {
 
     submitInitGridData(event) {
         this.initGridData = event.detail.initGridData
+        if (event.detail.apply !== true) {
+            this.useInitPreset = false
+        }
 
         if (this.initGrid === true) {
             this.drawBaseData()
@@ -179,9 +186,16 @@ export default class extends Controller {
     }
 
     drawBaseData() {
+        this.drawBoard()
+    }
+
+    drawBoard() {
         clear(this.boardCanvasTarget)
-        drawGrid(this.boardCanvasTarget, this.widthValue, this.heightValue, this.cellSizeValue)
-        drawData(this.boardCanvasTarget, this.glife.getField(), this.cellSizeValue)
+        if (this.showGrid) {
+            drawGrid(this.boardCanvasTarget, this.widthValue, this.heightValue, this.cellSizeValue)
+        }
+        drawData(this.boardCanvasTarget, this.glife.getField(), this.cellSizeValue, this.compact)
+        drawBorder(this.boardCanvasTarget, '#dddddd')
     }
 
     drawInitGridData() {
@@ -204,22 +218,24 @@ export default class extends Controller {
         )
     }
 
+    parseInitGridData(raw) {
+        return String(raw ?? '').replace(/[^01]/g, '').split('').map((cell) => Number(cell === '1'))
+    }
+
     initGridApply() {
         this.initGrid = false
         this.initGridCheckboxTarget.checked = false
 
-        this.glife.setField(Field(this.widthValue, this.heightValue), true)
+        this.initGridData = this.parseInitGridData(this.initGridDataTarget.value)
 
         const gridX = Number(this.initGridXTarget.value)
         const gridY = Number(this.initGridYTarget.value)
         const gridWidth = Number(this.initGridWidthTarget.value)
 
         this.initGridData.forEach((cell, x) => {
-            if (Boolean(cell)) {
-                const j = Math.floor(x / gridWidth)
-                const i = x % gridWidth
-                this.glife.setCell(gridX + i, gridY + j, true)
-            }
+            const j = Math.floor(x / gridWidth)
+            const i = x % gridWidth
+            this.glife.setCell(gridX + i, gridY + j, Boolean(cell))
         })
 
         this.drawBaseData()
@@ -243,7 +259,20 @@ export default class extends Controller {
         url.searchParams.set('initX', this.initGridXTarget.value)
         url.searchParams.set('initY', this.initGridYTarget.value)
         url.searchParams.set('initWidth', this.initGridWidthTarget.value)
-        url.searchParams.set('initData', this.initGridData.join(''))
+        const initData = this.initGridData.join('')
+        const initDataTooLarge = !this.useInitPreset && initData.length > 2048
+        this.largeInitDataWarningTarget.classList.toggle('hidden', !initDataTooLarge)
+        if (this.useInitPreset) {
+            url.searchParams.set('preset', 'portrait')
+            url.searchParams.delete('initData')
+        } else {
+            url.searchParams.delete('preset')
+            if (initDataTooLarge) {
+                url.searchParams.delete('initData')
+            } else {
+                url.searchParams.set('initData', initData)
+            }
+        }
         this.urlTarget.innerText = url.toString()
     }
 

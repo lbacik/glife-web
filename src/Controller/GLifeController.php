@@ -14,9 +14,13 @@ use Throwable;
 
 class GLifeController extends AbstractController
 {
-    #[Route('/', name: 'app_glife')]
+    #[Route('/', name: 'app_glife', methods: ['GET', 'POST'])]
     public function index(Request $request): Response
     {
+        $initData= $request->isMethod('POST')
+            ? trim($request->getContent())
+            : $request->query->get('initData');
+
         try {
             $glifeConfig = new GLifeConfig(
                 (int) $request->query->get('width', 20),
@@ -28,7 +32,7 @@ class GLifeController extends AbstractController
                 (int) $request->query->get('initX', 0),
                 (int) $request->query->get('initY', 0),
                 (int) $request->query->get('initWidth', 10),
-                $request->query->get('initData', null),
+                $initData,
             );
         } catch (Throwable $exception) {
             return $this->render('glife/error.html.twig', [
@@ -36,9 +40,11 @@ class GLifeController extends AbstractController
             ]);
         }
 
+        $url = $this->generateUrl('app_glife', [], UrlGeneratorInterface::ABSOLUTE_URL);
+
         return $this->render('glife/index.html.twig', [
             'config' => $glifeConfig,
-            'url' => $this->generateUrl('app_glife', [], UrlGeneratorInterface::ABSOLUTE_URL)
+            'url' => $url
         ]);
     }
 
