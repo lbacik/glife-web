@@ -3,7 +3,7 @@ import debounce from 'debounce'
 
 // Connects to data-controller="autosubmit"
 export default class extends Controller {
-  static targets = ['initGridData']
+  static targets = ['initGridData', 'initGridDataFile']
     static values = {
       initData: String,
     }
@@ -72,5 +72,26 @@ export default class extends Controller {
         apply: apply
       }
     })
+  }
+
+  openFilePicker() {
+    this.initGridDataFileTarget.click()
+  }
+
+  loadFromFile() {
+    const file = this.initGridDataFileTarget.files[0]
+    this.initGridDataFileTarget.value = ''
+
+    if (!file) {
+      return
+    }
+
+    const reader = new FileReader()
+    reader.onload = () => {
+      this.initGridDataTarget.value = String(reader.result || '').trim()
+      this.initDataValue = null
+      this.debouncedDispatchInitGridData()
+    }
+    reader.readAsText(file)
   }
 }
