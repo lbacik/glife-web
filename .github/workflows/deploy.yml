@@ -1,0 +1,120 @@
+# Deploys an already-built image tag to the Docker context `rum` over SSH.
+# Called by release.yml after a tag is built, and runnable by hand
+# (workflow_dispatch) to redeploy or roll back to any tag that has an image.
+name: Deploy
+
+on:
+  workflow_call:
+    inputs:
+      tag:
+        description: Image tag to deploy (e.g. v1.2.3)
+        required: true
+        type: string
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Image tag to deploy or roll back to (must already exist in ghcr.io/lbacik/glife-web)
+        required: true
+        type: string
+
+# A deploy must never be killed halfway through a converge.
+concurrency:
+  group: deploy-prod
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: prod
+      url: https://glife.lukaszbacik.com
+    env:
+      DOCKER_HOST: ssh://rum
+      # --env-file /dev/null is load-bearing: without it compose reads the
+      # committed .env and the ${VAR:?} guards resolve to dev values instead of
+      # failing the deploy. -p is explicit; COMPOSE_PROJECT_NAME is never relied on.
+      COMPOSE: docker compose -p glife --env-file /dev/null -f compose.prod.yaml
+      APP_IMAGE: ghcr.io/lbacik/glife-web:${{ inputs.tag }}
+      APP_VERSION: ${{ inputs.tag }}
+      # Variables
+      NETWORK: ${{ vars.NETWORK }}
+      DOMAIN: ${{ vars.DOMAIN }}
+      JSONHUB_API: ${{ vars.JSONHUB_API }}
+      TEST_RESULT_V1_DEFINITION: ${{ vars.TEST_RESULT_V1_DEFINITION }}
+      # Secrets
+      APP_SECRET: ${{ secrets.APP_SECRET }}
+    steps:
+      # The tag being deployed, not HEAD: compose.prod.yaml must match the image.
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ inputs.tag }}
+
+      - name: Pre-flight - required inputs are set
+        env:
+          REGISTRY_USER: ${{ secrets.REGISTRY_USER }}
+          REGISTRY_PASSWORD: ${{ secrets.REGISTRY_PASSWORD }}
+          DEPLOY_SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+          DEPLOY_SSH_KNOWN_HOSTS: ${{ secrets.DEPLOY_SSH_KNOWN_HOSTS }}
+        run: |
+          missing=""
+          for v in NETWORK DOMAIN JSONHUB_API TEST_RESULT_V1_DEFINITION APP_SECRET \
+                   REGISTRY_USER REGISTRY_PASSWORD DEPLOY_SSH_KEY DEPLOY_SSH_KNOWN_HOSTS; do
+            [ -n "${!v}" ] || missing="$missing $v"
+          done
+          if [ -n "$missing" ]; then
+            echo "::error::unset in the prod environment:$missing"
+            exit 1
+          fi
+
+      - name: Configure SSH access to rum
+        env:
+          DEPLOY_SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+          DEPLOY_SSH_KNOWN_HOSTS: ${{ secrets.DEPLOY_SSH_KNOWN_HOSTS }}
+        run: |
+          install -d -m 700 ~/.ssh
+          printf '%s\n' "$DEPLOY_SSH_KEY" > ~/.ssh/github-actions-deploy
+          chmod 600 ~/.ssh/github-actions-deploy
+          printf '%s\n' "$DEPLOY_SSH_KNOWN_HOSTS" >> ~/.ssh/known_hosts
+          cat >> ~/.ssh/config <<'EOF2'
+          Host rum
+            HostName rum.host.luka.sh
+            Port 2211
+            User debian
+            IdentityFile ~/.ssh/github-actions-deploy
+            IdentitiesOnly yes
+            StrictHostKeyChecking yes
+          EOF2
+
+      # Logging in on the runner is enough: the CLI forwards the auth with the
+      # pull, so the remote daemon gets the image without credentials on the host.
+      - uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: ${{ secrets.REGISTRY_USER }}
+          password: ${{ secrets.REGISTRY_PASSWORD }}
+
+      # No migration step: the project owns no schema (Doctrine is installed but
+      # there are no entities and migrations/ is empty).
+
+      - name: Deploy
+        run: $COMPOSE up -d --pull always --wait --wait-timeout 180
+
+      # Over the public URL, so TLS and the reverse proxy are part of the proof;
+      # up --wait only proves in-container health at converge time. The body
+      # check matters: nginx-proxy can answer with its own page. `/` is used
+      # rather than /tests/jsonhub, which depends on the external JsonHub API
+      # and would tie our deploy to its uptime. There is no worker container.
+      - name: Smoke test
+        run: |
+          url="https://${DOMAIN}/"
+          for i in $(seq 1 20); do
+            body=$(curl -fsS --max-time 10 "$url" 2>/dev/null) && \
+              grep -q '<title>.*GLife' <<<"$body" && { echo "OK on attempt $i"; exit 0; }
+            sleep 6
+          done
+          echo "::error::smoke test failed: $url did not return the GLife page"
+          $COMPOSE logs --tail 100 web
+          exit 1

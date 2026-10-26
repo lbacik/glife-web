@@ -1,0 +1,67 @@
+# Advisory checks. Every job is continue-on-error, so nothing here can block a
+# push, a PR or a release. It is a separate file from test.yml on purpose:
+# test.yml is reused by release.yml via workflow_call, and inside a called
+# workflow github.event_name is still "push" for a tag push, so an `if:` could
+# not tell "called by release" from "someone pushed a branch".
+#
+# Two kinds of check live here, with different destinies:
+#
+#  1. Waiting room - a check whose red is a defect in this repository, parked
+#     here until it reaches zero. When it does and can be held there, it
+#     graduates to test.yml and is deleted from here, not duplicated.
+#     (Currently empty: there is no static analyser in require-dev. Adding
+#     phpstan would start here.)
+#  2. Permanent watcher - goes red when someone ELSE acts (an advisory is
+#     published against an unchanged lockfile, a dependency releases a newer
+#     version). Its red is news, not a defect; it can never be "held at zero"
+#     and must never graduate - gating on it would give a third party a veto
+#     over our releases, hardest exactly when we are shipping a fix.
+#     Both jobs below are watchers.
+name: Quality
+
+on:
+  push:
+    branches: ['**']
+  pull_request:
+  schedule:
+    # Weekly, Monday, deliberately off the hour (:00 is the most crowded minute
+    # and GitHub drops scheduled runs under load). Schedules only ever run from
+    # the DEFAULT branch's copy of this file.
+    - cron: '23 5 * * 1'
+
+concurrency:
+  group: quality-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    name: composer audit (watcher)
+    runs-on: ubuntu-latest
+    # Neutral on a push so unrelated work is not reddened; allowed to fail on
+    # the schedule, because a scheduled run that swallows its failure notifies nobody.
+    continue-on-error: ${{ github.event_name != 'schedule' }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: shivammathur/setup-php@2.40.0
+        with:
+          php-version: '8.3'
+          tools: composer:v2
+          coverage: none
+      - run: composer audit --locked
+
+  outdated:
+    name: composer outdated (watcher)
+    runs-on: ubuntu-latest
+    continue-on-error: ${{ github.event_name != 'schedule' }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: shivammathur/setup-php@2.40.0
+        with:
+          php-version: '8.3'
+          tools: composer:v2
+          coverage: none
+      - run: composer install --no-interaction --prefer-dist --no-progress --no-scripts
+      - run: composer outdated --direct --strict
