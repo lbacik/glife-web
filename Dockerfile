@@ -1,4 +1,4 @@
-FROM dunglas/frankenphp:1-php8.3-bookworm
+FROM dunglas/frankenphp:1-php8.5-bookworm
 
 ENV SERVER_NAME=:80 \
     SERVER_ROOT=public/

@@ -27,11 +27,10 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
-      # 8.3 matches production: .php-version and the Dockerfile's FrankenPHP image.
-      # (composer.json only says >=8.2; CI follows the image, not the floor.)
+      # CI uses the same PHP version as the production FrankenPHP image.
       - uses: shivammathur/setup-php@2.40.0
         with:
-          php-version: '8.3'
+          php-version: '8.5'
           tools: composer:v2
           coverage: none
 

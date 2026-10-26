@@ -47,7 +47,7 @@ jobs:
       - uses: actions/checkout@v7
       - uses: shivammathur/setup-php@2.40.0
         with:
-          php-version: '8.3'
+          php-version: '8.5'
           tools: composer:v2
           coverage: none
       - run: composer audit --locked
@@ -60,7 +60,7 @@ jobs:
       - uses: actions/checkout@v7
       - uses: shivammathur/setup-php@2.40.0
         with:
-          php-version: '8.3'
+          php-version: '8.5'
           tools: composer:v2
           coverage: none
       - run: composer install --no-interaction --prefer-dist --no-progress --no-scripts
