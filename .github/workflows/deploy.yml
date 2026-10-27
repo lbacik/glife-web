@@ -42,8 +42,6 @@ jobs:
       # Variables
       NETWORK: ${{ vars.NETWORK }}
       DOMAIN: ${{ vars.DOMAIN }}
-      JSONHUB_API: ${{ vars.JSONHUB_API }}
-      TEST_RESULT_V1_DEFINITION: ${{ vars.TEST_RESULT_V1_DEFINITION }}
       # Secrets
       APP_SECRET: ${{ secrets.APP_SECRET }}
     steps:
@@ -104,9 +102,8 @@ jobs:
 
       # Over the public URL, so TLS and the reverse proxy are part of the proof;
       # up --wait only proves in-container health at converge time. The body
-      # check matters: nginx-proxy can answer with its own page. `/` is used
-      # rather than /tests/jsonhub, which depends on the external JsonHub API
-      # and would tie our deploy to its uptime. There is no worker container.
+      # check matters: nginx-proxy can answer with its own page. There is no
+      # worker container.
       - name: Smoke test
         run: |
           url="https://${DOMAIN}/"
