@@ -1,6 +1,6 @@
 # Production stack, deployed by .github/workflows/deploy.yml with
-# `docker compose --env-file /dev/null`, so every ${VAR:?} below must be
-# supplied by the deploy job (vars/secrets of the `prod` environment).
+# `docker compose --env-file /dev/null`, so every required ${VAR:?} below must
+# be supplied by the deploy job (vars/secrets of the `prod` environment).
 # The older docker-compose-prod.yml (build on the host from a git URL) is
 # superseded by this file for tagged releases.
 networks:
@@ -18,8 +18,8 @@ services:
       APP_ENV: prod
       APP_SECRET: "${APP_SECRET:?APP_SECRET is required}"
       APP_VERSION: "${APP_VERSION:?APP_VERSION is required}"
-      JSONHUB_API: "${JSONHUB_API:?JSONHUB_API is required}"
-      TEST_RESULT_V1_DEFINITION: "${TEST_RESULT_V1_DEFINITION:?TEST_RESULT_V1_DEFINITION is required}"
+      JSONHUB_API: "${JSONHUB_API:-}"
+      TEST_RESULT_V1_DEFINITION: "${TEST_RESULT_V1_DEFINITION:-}"
     healthcheck:
       test: ["CMD", "curl", "-fsS", "-o", "/dev/null", "http://localhost/"]
       interval: 10s

@@ -11,9 +11,15 @@ use JsonHub\SDK\FilterCriteria;
 class JsonHubService
 {
     public function __construct(
+        private readonly string $jsonHubApi,
         public readonly string $testResultV1Definition,
         private readonly Client $client,
     ) {
+    }
+
+    public function isConfigured(): bool
+    {
+        return '' !== $this->jsonHubApi && '' !== $this->testResultV1Definition;
     }
 
     public function getAllTests(

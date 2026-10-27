@@ -30,6 +30,10 @@ class TestsJsonHubController extends AbstractController
     #[Route('/tests/jsonhub', name: 'app_tests_jsonhub')]
     public function index(Request $request): Response
     {
+        if (!$this->jsonHubService->isConfigured()) {
+            throw $this->createNotFoundException();
+        }
+
         $limit = $request->query->getInt('limit', 10);
         $page = $request->query->getInt('page', 1);
 
@@ -56,6 +60,10 @@ class TestsJsonHubController extends AbstractController
     #[Route('/tests/jsonhub/{uuid}', name: 'app_tests_jsonhub_show')]
     public function show(string $uuid): Response
     {
+        if (!$this->jsonHubService->isConfigured()) {
+            throw $this->createNotFoundException();
+        }
+
         $test = $this->jsonHubService->getTest($uuid);
         $data = $this->testDataService->map(TestDataSource::TEST_RESULT_V1, [(array) $test]);
 
