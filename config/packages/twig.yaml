@@ -3,6 +3,7 @@ twig:
     form_themes: ['@Flowbite/form/default.html.twig']
     globals:
         version: '%env(APP_VERSION)%'
+    file_name_pattern: '*.twig'
 
 when@test:
     twig:

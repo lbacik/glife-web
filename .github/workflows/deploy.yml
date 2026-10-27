@@ -97,7 +97,7 @@ jobs:
           password: ${{ secrets.REGISTRY_PASSWORD }}
 
       # No migration step: the project owns no schema (Doctrine is installed but
-      # there are no entities and migrations/ is empty).
+      # there are no entities and src/Migrations/ is empty).
 
       - name: Deploy
         run: $COMPOSE up -d --pull always --wait --wait-timeout 180
