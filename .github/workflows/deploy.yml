@@ -30,7 +30,7 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: prod
-      url: https://glife.lukaszbacik.com
+      url: https://glife.luka.sh
     env:
       DOCKER_HOST: ssh://rum
       # --env-file /dev/null is load-bearing: without it compose reads the
